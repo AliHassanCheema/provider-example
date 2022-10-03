@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 void main() {
   runApp( MaterialApp(
-    title: 'Flutter Demo',
+    title: 'Provider',
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
@@ -11,37 +11,47 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  var contoller = MyAppController();
+   MyApp({super.key});
+  final contoller = MyAppController();
   @override
   Widget build(BuildContext context) {
-    debugPrint(' Build called>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-    return  Scaffold(
-      body: ChangeNotifierProvider(
-        create: (context) {
-          return contoller;
-        },
-        child: Center(
-          child: Consumer <MyAppController> (
-            builder:(context, value, child) {
-              debugPrint('consumer calledd>>>>>>>>>>>>>>>');
-              return Text(value.name);
-            }),
-        ),
-      ),
-      floatingActionButton:  FloatingActionButton(onPressed: () {
-       contoller.onChange();
-      },
-      child: const Icon(Icons.change_circle),));
+    return  ChangeNotifierProvider(
+      create: (context) {
+            return contoller;
+          },
+      child: Consumer<MyAppController> (
+        builder: (context, value, child) {
+          return Scaffold(
+          appBar: AppBar(title: const Text('Provider Example')),
+          body: Center(
+            child: Text(contoller.name)
+          ),
+          floatingActionButton:  FloatingActionButton(onPressed: () {
+           contoller.isChecked ? contoller.onIncrement() : contoller.onChange();
+          },
+          child:  Consumer (
+            builder: (context, value, child) {
+              return Icon(contoller.isChecked ? Icons.add : Icons.change_circle);
+            },),));
+       
+        }, ),
+    );
   }
   }
 
 class MyAppController extends ChangeNotifier{
 
   String name = 'Checking';
+  bool isChecked = false;
+  int i = 0;
 
   onChange(){
-    debugPrint('onChange calledddddddddddddddddddddddddddddddd');
+     isChecked = true;
      name = ' Ali Hassan';
+     notifyListeners();
+  }
+  onIncrement(){
+     name = ' Ali Hassan  ${i++}';
      notifyListeners();
   }
 
